@@ -1,0 +1,80 @@
+SELECT FirstName, LastName FROM Customers WHERE FirstName LIKE '%C%' AND LastName LIKE '%E%' ORDER BY FirstName, LastName;
+
+
+SELECT OrderID, COUNT(DISTINCT ProductID) AS CountOfProducts FROM OrderDetails GROUP BY OrderID ORDER BY OrderID ASC;
+
+
+SELECT OrderID, COUNT(DISTINCT ProductID) AS CountOfProducts FROM OrderDetails GROUP BY OrderID HAVING CountOfProducts > 8 ORDER BY OrderID ASC;
+
+5 DIFFERENT PRODUCTS
+SELECT COUNT(OrderID) AS OrderCount FROM (SELECT OrderID, COUNT(DISTINCT ProductID) AS ProductCount FROM Orderdetails GROUP BY OrderID) AS Subquery WHERE ProductCount = 5;
+
+
+City, State, Country Customers
+SELECT City , State, Country, COUNT(DISTINCT CustomerID) AS Num_of_Citizens FROM Customers GROUP BY City , State, Country ORDER BY City ASC;
+
+
+3 Customers
+SELECT City , State, COUNT(DISTINCT CustomerID) AS Num_of_Citizens FROM Customers GROUP BY City , State HAVING Num_of_Citizens < 3 ORDER BY City ASC;
+
+M CUSTOMERS	
+Select Country, count(CustomerID) as Num_of_citizens from Customers where FirstName like "M%" group by Country order by Country
+
+
+Select * from Products Where Product like "%Liquid%" and (Sub_Category = "Car & Shoe Care" or Sub_Category = "Bath & Hand Wash") Order by ProductID
+
+VOWEL
+SELECT * FROM Customers WHERE LOWER(SUBSTR(FirstName, 1, 1)) IN ('a', 'e', 'i', 'o', 'u') ORDER BY CustomerID ASC;
+
+550 AMOUNT
+SELECT ShipperID, AVG(Total_order_amount) AS AverageTotalAmount FROM orders WHERE Total_order_amount % 550 = 0 GROUP BY ShipperID ORDER BY ShipperID DESC;
+
+
+SELECT Category_ID, AVG(Sale_Price) AS AverageSalePrice FROM products WHERE Market_Price >= 100 AND Market_Price <= 200 GROUP BY Category_ID ORDER BY Category_ID DESC;
+
+SELECT Category_ID, SUM(Market_Price) AS TotalMarketPrice FROM products WHERE Product LIKE '%Cake%' GROUP BY Category_ID ORDER BY Category_ID DESC;
+
+Specific Date Total Amount
+select * from Orders where Total_order_amount in (select Total_order_amount from Orders where OrderDate = '2020-09-22');
+
+Longest City
+SELECT City, LENGTH(City) AS NameLength FROM customers ORDER BY NameLength DESC LIMIT 1;
+
+AVG SPEND
+SELECT c.CustomerID, c.FirstName, c.LastName, AVG(o.Total_order_amount) AS Avg_Spent FROM customers AS c JOIN orders AS o ON c.CustomerID = o.CustomerID GROUP BY c.CustomerID, c.FirstName, c.LastName ORDER BY c.CustomerID ASC;
+
+LOWEST & HIGHEST TRANSACTION LEFT OIN
+Select p.PaymentID,p.PaymentType,MIN(o.Total_order_amount) as Lowest_Transaction FROM Payments as p LEFT JOIN Orders as o ON p.PaymentID = o.PaymentID Group by p.PaymentID,p.PaymentType Order by p.PaymentID ASC;
+Select p.PaymentID,p.PaymentType,MAX(o.Total_order_amount) as Highest_Transaction FROM Payments as p LEFT JOIN Orders as o ON p.PaymentID = o.PaymentID Group by p.PaymentID,p.PaymentType Order by p.PaymentID ASC;
+
+
+Select c.City, avg(o.Total_order_amount) as Avg_amount from customers as c Join orders as o ON c.customerID = o.customerID Group by c.City Order by c.City ASC;
+
+
+Select c.CategoryID, c.CategoryName, count(distinct p.Brand) as No_of_Uniquebrands From Category as c Join Products as p ON c.CategoryID = p.Category_ID Group by c.CategoryID order by c.CategoryID
+
+
+Select c.CategoryID, c.CategoryName, count(distinct p.Sub_category) as No_of_Subcategory From Category as c Join Products as p ON c.CategoryID = p.Category_ID Group by c.CategoryID order by c.CategoryID;
+
+Select C.CustomerID,C.FirstName,C.LastName,COUNT(O.OrderID) From Customers C LEFT JOIN Orders O ON C.CustomerID = O.CustomerID group by C.CustomerID, C.FirstName, C.LastName order by COUNT(O.OrderID) DESC, C.CustomerID ASC LIMIT 10;
+
+6 ORDERS
+SELECT c.CustomerID, c.FirstName, c.LastName FROM customers c JOIN ( SELECT CustomerID, COUNT(*) AS OrderCount FROM orders GROUP BY CustomerID HAVING OrderCount = 6 ) o ON c.CustomerID = o.CustomerID ORDER BY c.CustomerID ASC;
+
+1 ORDER
+SELECT c.* FROM customers c WHERE ( SELECT COUNT(*) FROM orders o WHERE o.CustomerID = c.CustomerID ) = 1;
+
+CUSTOMER TOTAL EXPENDITURE
+SELECT c.CustomerID, c.FirstName, c.LastName, SUM(o.Total_order_amount) as Total_spend FROM customers AS c JOIN orders AS o ON c.CustomerID = o.CustomerID GROUP BY c.CustomerID, c.FirstName, c.LastName ORDER BY c.CustomerID asc;
+
+SHIPPING ORDERS
+SELECT s.ShipperID, s.CompanyName, s.Phone, COUNT(o.OrderID) AS Number_Of_Orders FROM shippers s INNER JOIN orders o ON s.ShipperID = o.ShipperID GROUP BY s.ShipperID, s.CompanyName, s.Phone ORDER BY s.ShipperID ASC;
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,20 @@
+WITH abc as ( SELECT YEAR(o.ShipDate) AS ShipYear, QUARTER (o.ShipDate) AS ShipQuarter,s.ShipperID,s.CompanyName,o.OrderID FROM Orders o JOIN shippers s ON o.ShipperID = s.ShipperID ) SELECT a.ShipYear AS Year, a.ShipQuarter AS Quarter, a.ShipperID, a.CompanyName,SUM(od.Quantity) as Total_quantity FROM abc as a JOIN orderdetails as od ON a.OrderID = od.OrderID GROUP BY a.ShipYear, a.ShipQuarter, a.ShipperID, a.CompanyName ORDER BY ShipYear ASC, ShipQuarter ASC, Total_quantity DESC;
+
+
+SELECT CustomerID, FirstName, LastName, CONCAT(CustomerID, '@masai.com') AS Email FROM Customers ORDER BY CustomerID;
+
+
+SELECT ProductID,CONCAT(Brand, ' - ', LEFT(Product, 20), ' - ', Type) AS Combination FROM Products ORDER BY ProductID ASC;
+
+
+SELECT COUNT(*) FROM Products WHERE Sub_Category IS NULL
+
+SELECT Brand,ROUND(AVG(((Market_Price - Sale_Price) / Market_Price) * 100)) AS AvgDiscount FROM Products WHERE Sub_Category = 'bakeware' GROUP BY Brand ORDER BY AvgDiscount DESC;
+
+
+Hard sum podala
+
+WITH CategoryOrderCount AS ( SELECT p.Category_ID,COUNT(o.OrderID) AS OrderCount FROM Orders o JOIN OrderDetails od ON o.OrderID = od.OrderID JOIN Products p ON od.ProductID = p.ProductID WHERE YEAR(o.OrderDate) = 2020 GROUP BY p.Category_ID ), CategoryInfo AS ( SELECT CategoryID,CategoryName FROM Category ) SELECT coc.Category_ID,ci.CategoryName,coc.OrderCount FROM CategoryOrderCount coc JOIN CategoryInfo ci ON coc.Category_ID = ci.CategoryID ORDER BY coc.OrderCount DESC LIMIT 3;
+
+
+Last sum podala

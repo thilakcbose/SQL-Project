@@ -1,0 +1,47 @@
+SELECT ProductID, Product,Brand, CONCAT(Sub_Category,' ','-',' ',Type) As merged FROM Products Order BY ProductID;
+
+SELECT customerID, TIMESTAMPDIFF(MONTH, MAX(OrderDate), NOW()) AS months_ago FROM orders GROUP BY customerID HAVING COUNT(orderID) = 1 ORDER BY customerID ASC;
+
+SELECT YEAR(DateEntered) as Year_, COUNT(CustomerID) as total_ FROM Customers GROUP BY Year_ ORDER BY year_ ASC;
+
+SELECT YEAR(OrderDate) AS Year_,SUM(Total_order_amount) AS Total FROM Orders WHERE MONTH(OrderDate) IN (9, 10, 11) GROUP BY Year_ ORDER BY Year_;
+
+
+WITH shipping AS ( SELECT o.OrderID, TIMESTAMPDIFF(DAY, o.OrderDate, o.ShipDate) AS Days_Taken_Ship, od.ProductID FROM Orders AS o JOIN OrderDetails AS od ON o.OrderID = od.OrderID WHERE TIMESTAMPDIFF(DAY, o.OrderDate, o.ShipDate) >= 5 ) SELECT s.OrderID, s.ProductID, p.Product, s.Days_Taken_Ship FROM shipping AS s JOIN Products AS p ON s.ProductID = p.ProductID ORDER BY s.OrderID, s.ProductID;
+
+
+SELECT CustomerID, OrderDate, total FROM (SELECT CustomerID, OrderDate, Total_order_amount as total, RANK() OVER(PARTITION BY customerID ORDER BY Total_order_amount DESC) as abc FROM Orders) as cte WHERE abc = 1 GROUP BY CustomerID, OrderDate,total;
+
+5th latest order
+
+SELECT * FROM (SELECT OrderID, CustomerID, RANK() OVER(PARTITION BY CustomerID ORDER BY Total_order_amount DESC) As rank_ FROM orders ) as abc WHERE rank_ <= 3 GROUP BY OrderID, CustomerID ORDER BY CustomerID;
+
+
+SELECT * FROM (SELECT ProductID, Product, Category_ID, DENSE_RANK() OVER (PARTITION BY Category_ID ORDER BY Market_Price DESC) As rank_ FROM products) as abc WHERE rank_ <=2 GROUP BY ProductID, Product, Category_ID ORDER BY Category_ID ASC, rank_ ASC, ProductID ASC;
+
+
+SELECT * FROM (SELECT ProductID, Product, Category_ID, DENSE_RANK() OVER (PARTITION BY Category_ID ORDER BY (Market_Price - Sale_Price) DESC) As rank_ FROM products) as abc WHERE rank_ <=3 GROUP BY ProductID, Product, Category_ID ORDER BY Category_ID ASC, ProductID ASC;
+
+SELECT * FROM (SELECT OrderID, CustomerID, MONTH(OrderDate) AS mnth, Total_order_amount, DENSE_RANK() OVER (PARTITION BY MONTH(OrderDate) ORDER BY Total_order_amount DESC) As rank_ FROM orders) as abc WHERE rank_ <=5 GROUP BY OrderID, CustomerID,mnth, Total_order_amount ORDER BY mnth ASC, rank_ ASC;
+
+SELECT * FROM (SELECT row_number() OVER (ORDER BY Total_order_amount DESC, OrderID ASC ) As s_no,OrderID, CustomerID, Total_order_amount FROM orders) as ac WHERE s_no % 2 = 0 ORDER BY s_no ASC;
+
+SELECT * FROM (SELECT *, dense_rank() OVER(partition by Type Order by Sale_Price DESC) as rnk FROM products ) as ahc WHERE rnk <=2 ORDER BY Type ASC, rnk ASC;
+
+2021'S Top 10
+
+WITH abc AS( SELECT o.OrderID, C.customerID, c.FirstName, c.LastName,o.Total_order_amount, c.Country, DENSE_RANK() OVER(PARTITION BY c.Country ORDER BY o.Total_order_amount DESC) as rnk FROM customers c JOIN orders o ON c.customerID = o.CustomerID ) SELECT * FROM abc WHERE rnk = 2 GROUP BY OrderID, customerID, FirstName, LastName,Total_order_amount,Country ORDER BY OrderID;
+
+SELECT * FROM (SELECT row_number() OVER (ORDER BY Total_order_amount DESC, OrderID ASC ) As s_no,OrderID, CustomerID, Total_order_amount FROM orders) as ac WHERE s_no % 2 <> 0 ORDER BY s_no ASC;
+
+
+SELECT o.*, NTILE(30) OVER (ORDER BY o.total_order_amount DESC) AS bucket FROM orders o;
+
+
+SELECT o.*, LAG(o.total_order_amount) OVER (ORDER BY o.orderID) AS previous_order_amount FROM orders o;
+
+
+SELECT o.*, LEAD(o.shipDate, 10) OVER (ORDER BY o.orderID) AS Future_shipdate FROM orders o;
+
+
+SELECT shipperID, SUM(total_order_amount) AS total_order_amount, DENSE_RANK() OVER (ORDER BY SUM(total_order_amount) DESC) AS rank_ FROM orders GROUP BY shipperID ORDER BY rank_ ASC;

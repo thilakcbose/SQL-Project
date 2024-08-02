@@ -1,0 +1,62 @@
+select c.country,count(o.orderID) as Number_of_orders from customers c join orders o on c.customerID = o.customerID group by c.country having Number_of_orders between 100 and 200 order by c.country asc;
+
+350000 And Above
+SELECT c.CustomerID, c.FirstName, c.LastName, c.City, SUM(o.Total_order_amount) AS TotalSpent FROM customers c JOIN orders o ON c.CustomerID = o.CustomerID GROUP BY c.CustomerID, c.FirstName, c.LastName, c.City HAVING TotalSpent > 350000 ORDER BY TotalSpent DESC, c.CustomerID ASC;
+
+M Name And More Than 10 Orders
+SELECT c.CustomerID, c.FirstName, c.LastName, COUNT(DISTINCT o.OrderID) AS Total_Unique_Orders, SUM(o.Total_order_amount) AS Total_Amount_Spent FROM Customers c INNER JOIN Orders o ON c.CustomerID = o.CustomerID WHERE c.LastName LIKE '%m%' GROUP BY c.CustomerID, c.FirstName, c.LastName HAVING COUNT(DISTINCT o.OrderID) > 10 ORDER BY c.CustomerID ASC;
+
+TOP 5 CATEGORY
+select c.categoryID,c.categoryname, sum(o.quantity) as total_quan from category c join products p on c.categoryID = p.category_ID join OrderDetails o ON p.ProductID = o.ProductID group by c.categoryID, c.categoryname order by total_quan desc limit 5;
+
+PRODUCT 5
+SELECT p.Product, p.Brand, p.Sale_Price, p.Market_Price FROM Products p JOIN OrderDetails od ON p.ProductID = od.ProductID WHERE od.Quantity >= 5 GROUP BY p.Product, p.Brand, p.Sale_Price, p.Market_Price HAVING COUNT(DISTINCT od.OrderID) >= 2 ORDER BY p.Product;
+
+First 3 Payments
+SELECT p.PaymentID, p.PaymentType, COUNT(o.OrderID) AS TotalNumberOfOrders, SUM(o.Total_order_amount) AS TotalRevenueCollected FROM Payments p JOIN Orders o ON p.PaymentID = o.PaymentID WHERE p.PaymentID IN (1, 2, 3) GROUP BY p.PaymentID, p.PaymentType ORDER BY p.PaymentID;
+
+Evens Quantity
+SELECT p.Brand, SUM(p.Sale_Price) AS Total FROM Products p JOIN OrderDetails od ON p.ProductID = od.ProductID WHERE od.Quantity % 2 = 0 GROUP BY p.Brand ORDER BY p.Brand DESC;
+
+BEVERAGES COUNT
+SELECT COUNT(DISTINCT od.OrderID) AS beverages_ordered FROM Products p JOIN Category c ON c.CategoryID = p.Category_id JOIN OrderDetails od ON od.Product_ID = p.ProductID WHERE c.CategoryName = 'Beverages';
+
+HIGHEST VALUE
+SELECT OrderDate, MAX(Total_order_amount) AS Highest_Order, COUNT(OrderID) AS Number_Of_Orders FROM Orders GROUP BY OrderDate ORDER BY Number_Of_orders DESC, Highest_Order DESC;
+
+ALL BEVERAGES
+SELECT p.ProductID, p.Product, p.Sale_Price, p.Market_Price FROM Products p Join Category c On p.category_id = c.categoryID WHERE c.CategoryName = 'Beverages' Group by p.ProductID, p.Product, p.Sale_Price, p.Market_Price ORDER BY p.ProductID ASC;
+
+1500
+Select s.CompanyName , Avg(o.Total_order_amount) as Avg_amount From Shippers s Join Orders o on s.ShipperID = o.ShipperID Group by s.CompanyName Having Avg_amount > 1500 order by Avg_amount asc;
+
+BASIC ORDER DETAILS
+SELECT OD.OrderDetailID, OD.OrderID, S.CompanyName, P.ProductID, P.Product, OD.Quantity FROM OrderDetails AS OD LEFT JOIN Products AS P ON OD.ProductID = P.ProductID LEFT JOIN Orders AS O ON OD.OrderID = O.OrderID LEFT JOIN Suppliers AS S ON OD.SupplierID = S.SupplierID ORDER BY OD.OrderDetailID ASC;
+
+SELECT S.ShipperID, S.CompanyName, SUM(O.Total_order_amount) AS Total FROM Shippers AS S JOIN Orders AS O ON S.ShipperID = O.ShipperID WHERE O.OrderDate >= '2020-07-01' AND O.OrderDate <= '2020-12-31' GROUP BY S.ShipperID, S.CompanyName ORDER BY S.CompanyName;
+
+SELECT Date_of_Birth, COUNT(CustomerID) AS Number_Of_Customers FROM Customers GROUP BY Date_of_Birth ORDER BY Date_of_Birth DESC;
+
+
+SELECT p.ProductID, p.Product, p.Sub_Category, p.Sale_Price, p.Market_Price FROM Products p JOIN Category c ON p.Category_ID = c.CategoryID WHERE c.CategoryName <> 'Beverages' ORDER BY p.ProductID ASC;
+
+SELECT o.OrderID, o.CustomerID, o.PaymentID, p.PaymentType, o.Total_Order_Amount FROM Orders o JOIN Customers c ON o.CustomerID = c.CustomerID JOIN Payments p ON o.PaymentID = p.PaymentID WHERE p.PaymentType NOT IN ('Credit card', 'Debit card') ORDER BY o.OrderID ASC;
+
+
+SELECT P.PaymentID, P.PaymentType, COUNT(*) AS NumberOfOrders FROM Payments AS P INNER JOIN Orders AS O ON P.PaymentID = O.PaymentID WHERE O.OrderDate LIKE '2020-05%' GROUP BY P.PaymentID, P.PaymentType ORDER BY P.PaymentID ASC;
+
+SELECT c.Firstname, c.Lastname, SUM(o.Total_order_amount) AS TotalAmount FROM Customers c JOIN Orders o ON c.CustomerID = o.CustomerID WHERE c.State = 'California' GROUP BY c.Firstname, c.Lastname ORDER BY c.Firstname ASC, c.Lastname ASC;
+
+PRODUCTS MOST SOLD
+Select p.PRoductId, Product, Count(c.CustomerID) From Customers c join Orders o ON C.customerID = o.customerid join orderDetails od On o.orderId = od.orderId JOin Products p On od.productid = p.productid Group by 1,2 Having Count(c.CustomerId) > 5 Order by 3 desc, 1;
+
+
+ROLL NO 21
+SELECT Roll_No, Name, Mark FROM ( SELECT 20 AS Roll_No, 'Ankit' AS Name, 55 AS Mark UNION ALL SELECT 21 AS Roll_No, 'Aman' AS Name, 68 AS Mark UNION ALL SELECT 22 AS Roll_No, 'Amit' AS Name, 76 AS Mark ) AS StudentData ORDER BY Roll_No ASC;
+
+
+
+
+
+
+	

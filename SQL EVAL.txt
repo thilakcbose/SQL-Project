@@ -1,0 +1,159 @@
+Get the Description of customer along with the Customerid and Domain of their email(like gmail.com, yahoo.com).
+
+For customer with no lastname take Web as their last name..
+
+The Final output should contain this columns Customerid, Domain of their email, Description.
+
+Get the details of description from the below attached sample output Description_ column.
+
+Sort the result by DateEntered desc, if date entered is same then CustomeId in ascending.
+
+Note- All letters are case sensetive take same case letters as given in sample output Description_. Every Day value will have 'th' in front of it.
+
+Sample Ouput in words-
+
+Malcolm Julian was born on 8th March 1985 has ordered 12 orders yet.
+
+ANSWER:
+WITH CustomerDetails AS (
+    SELECT
+        c.CustomerID,
+        c.Email,
+        COALESCE(c.LastName, 'Web') AS LastName,
+        c.FirstName,
+        c.Date_of_Birth,
+        COUNT(o.OrderID) AS OrderCount,
+        c.DateEntered
+    FROM
+        Customers c
+    LEFT JOIN
+        Orders o ON c.CustomerID = o.CustomerID
+    GROUP BY
+        c.CustomerID,
+        c.Email,
+        c.LastName,
+        c.FirstName,
+        c.Date_of_Birth,
+        c.DateEntered
+),
+DomainDetails AS (
+    SELECT
+        CustomerID,
+        SUBSTRING_INDEX(Email, '@', -1) AS Domain,
+        FirstName,
+        LastName,
+        Date_of_Birth,
+        OrderCount,
+        DateEntered
+    FROM
+        CustomerDetails
+),
+DescriptionDetails AS (
+    SELECT
+        CustomerID,
+        Domain,
+        CONCAT(FirstName, ' ', LastName, ' was born on ', DAY(Date_of_Birth), 'th ', DATE_FORMAT(Date_of_Birth, '%M %Y'), ' has ordered ', OrderCount, ' orders yet.') AS Description,
+        DateEntered
+    FROM
+        DomainDetails
+)
+SELECT
+    CustomerID,
+    Domain,
+    Description
+FROM
+    DescriptionDetails
+ORDER BY
+    DateEntered DESC,
+    CustomerID ASC;
+
+
+Identify the top 5 categories which had the highest quantity of products ordered.
+
+Print Category ID, Category Name and Corresponding Total Quantity.
+
+Sort the result in descending order of Total Quantity.
+
+ANSWER:
+
+SELECT c.CategoryID , c.CategoryName , SUM(o.Quantity) AS Total_quantity FROM Category c JOIN Products p ON c.CategoryID = p.Category_ID JOIN OrderDetails o ON p.ProductID = o.ProductID GROUP BY c.CategoryID , c.CategoryName ORDER BY Total_quantity DESC LIMIT 5;
+
+
+Identify unique dates on which details of the customers were entered into the database.
+
+Sort the resut in descending order of Date Entered.
+
+ANSWER:
+SELECT DISTINCT DateEntered FROM Customers ORDER BY DateEntered DESC;
+
+
+For each customer print the following sentence. Consider only those customers who ordered at least once.
+Sort the output in ascending order on Customer Id. Example - James placed their first order in May 2020
+ANSWER:
+SELECT 
+    CONCAT(FirstName, ' placed their first order in ', MONTHNAME(min_order_date), ' ', YEAR(min_order_date)) AS Output
+FROM 
+    (SELECT 
+         c.CustomerID, c.FirstName, MIN(o.OrderDate) as min_order_date
+     FROM 
+         Customers AS c
+     JOIN 
+         Orders AS o ON c.CustomerID = o.CustomerID
+     GROUP BY 
+         c.CustomerID, c.FirstName
+    ) AS customer_orders
+ORDER BY 
+    CustomerID;
+
+
+AMAZON:
+
+with abc as (
+select *
+from(
+select marketplace_id,competitor_name,gl_product_group,is_super_image_comp,is_image_competitor,
+row_number() over (partition by marketplace_id,competitor_name,gl_product_group) as rn
+from cmtstg.competitor_dim
+where marketplace_id = 1
+)where rn = 1),
+
+
+total as (
+select 
+marketplace_id,gl_product_group,
+sum(case when is_super_image_comp = 'Y' then 1 else 0 end) as total_sic,
+sum(case when is_image_competitor = 'Y' then 1 else 0 end) as total_ic
+from cmtstg.competitor_dim
+where marketplace_id = 1
+group by marketplace_id,gl_product_group
+),
+
+gl_dat as (
+select distinct product_family, gl_product_group,gl_description,marketplace_id
+from cmtstg.subcat_dim
+where marketplace_id = 1
+),
+
+aaa as (
+select
+a.asin, a.marketplace_id, a.competitor_name,b.product_family,b.gl_description,c.is_super_image_comp,c.is_image_competitor,
+sum(case when (c.is_super_image_comp = 'Y' and a.mapping_status = 'ITEM FOUND') then 1 else 0 end) as sic_if,
+sum(case when (c.is_image_competitor = 'Y' and a.mapping_status = 'ITEM FOUND') then 1 else 0 end) as ic_if,
+SUM(case when (c.is_super_image_comp = 'N' and c.is_image_competitor = 'N' and a.mapping_status = 'ITEM FOUND') then 1 else 0 end) as nic_if,
+d.total_sic,d.total_ic
+from cmtstg.asin_status_raw_feeds_na a
+join gl_dat b on a.gl_product_group=b.gl_product_group and a.marketplace_id=b.marketplace_id
+join abc c on a.gl_product_group=c.gl_product_group and a.marketplace_id=c.marketplace_id and a.competitor_name=c.competitor_name
+join total d on a.marketplace_id = d.marketplace_id and a.gl_product_group = d.gl_product_group
+where
+a.activity_day = '2022-11-11' and a.marketplace_id = 1
+group by
+a.asin, a.marketplace_id, a.competitor_name,b.product_family,b.gl_description,c.is_super_image_comp,c.is_image_competitor,d.total_sic,d.total_ic
+)
+
+select count(*)
+from aaa
+
+
+
+

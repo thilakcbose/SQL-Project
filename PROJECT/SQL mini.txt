@@ -1,0 +1,85 @@
+-- To read all the contents from table cars24
+Use project;
+Select * from cars24;
+
+-- To know unique years 
+select distinct year from cars24 
+order by year;
+
+-- To count the unique car names and giving column name 
+Select count(distinct name) as Uniquecount from cars24
+
+-- To create insights using WHERE and LOGICAL OPERATORS
+
+4-- Using AND 
+Select * from cars24
+where year < 2007 and selling_price < 220000;
+-- Using OR
+Select * from cars24
+where year < 2004 or selling_price < 188000;
+-- Using NOT
+Select * from cars24
+where not year < 2004 or selling_price < 188000;
+-- Using BETWEEN
+Select * from cars24
+where  selling_price between 100000 and 300000;
+-- Using IN
+Select * from cars24
+where  seats in ('4','7');
+-- Using NOT IN
+Select * from cars24
+where  seats not in ('4','7');
+
+-- To find specific string patterns using LIKE
+Select * from cars24
+where name LIKE 'R%';
+Select * from cars24
+where name LIKE '%a';
+-- To find specific character pattern using LIKE
+Select * from cars24
+where name LIKE '%_a';
+Select * from cars24
+where name LIKE 'a_%';
+
+-- To find strings using REGEXP
+Select * from cars24
+where name REGEXP '^audi';
+
+-- To limit the result using LIMIT
+Select selling_price
+from cars24
+LIMIT 10;
+
+16
+Select avg(selling_price) as Average_selling_price
+from cars24;
+17
+Select max(selling_price) as Max_selling_price
+from cars24;
+
+18
+Select min(selling_price) as Min_selling_price
+from cars24;
+
+19
+Select fuel, Count(*) AS Number_of_cars from
+cars24
+Group by fuel;
+
+20
+Select owner, Count(*) as totalcount from cars24
+Group by owner
+Order by 2 desc;
+
+
+select max(km_driven) from cars24 as max_kmdriven;
+
+select * from cars24
+where km_driven = (select max(km_driven) from cars24 as max_kmdriven);
+
+
+
+
+
+
+

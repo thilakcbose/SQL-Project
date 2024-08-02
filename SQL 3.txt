@@ -1,0 +1,17 @@
+NO CARDS ALLOWED
+SELECT o.OrderID, o.CustomerID, p.PaymentID, p.PaymentType,o.Total_order_amount FROM Orders o JOIN Payments p ON p.PaymentID = o.PaymentID WHERE p.PaymentType NOT IN ('Credit Card', 'Debit Card') ORDER BY OrderID;
+
+
+SELECT CONCAT(FirstName, ' placed their first order in ', MONTHNAME(min_order_date), ' ', YEAR(min_order_date)) AS Output FROM (SELECT c.CustomerID, c.FirstName, MIN(o.OrderDate) as min_order_date FROM Customers AS c JOIN Orders AS o ON c.CustomerID = o.CustomerID GROUP BY c.CustomerID, c.FirstName ) AS customer_orders ORDER BY CustomerID;
+
+
+WITH result AS( SELECT p.category_ID, ((p.Market_Price - p.Sale_Price)/p.Market_Price) * 100 AS discPer FROM Products as p JOIN Category as c ON p.category_ID = c.categoryID ) SELECT r.category_ID, ROUND(AVG(r.discper),2) as results FROM result as r GROUP BY r.category_ID ORDER BY r.category_ID;
+
+
+SELECT MONTHNAME(DateEntered) AS month, Count(*) AS cnt FROM Customers GROUP BY month ORDER BY cnt DESC LIMIT 3;
+
+WITH boring AS (SELECT * FROM products as c WHERE Sub_Category IN ('All Purpose Cleaners' , 'Bakeware')) SELECT * FROM boring;
+
+SELECT QUARTER(DateEntered) AS quarters, COUNT(*) AS number_of_customers FROM Customers GROUP BY quarters ORDER BY number_of_customers DESC;
+
+SELECT * FROM (SELECT *, TIMESTAMPDIFF(DAY, OrderDate, DeliveryDate) as Day_Diff FROM Orders HAVING Day_Diff >= 25) AS cat WHERE OrderDate LIKE '%2020%' AND DeliveryDate LIKE '%2021%' ORDER BY OrderID;
